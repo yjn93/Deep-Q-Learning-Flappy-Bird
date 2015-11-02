@@ -87,9 +87,9 @@ var canvas, ctx;
 
 
       this.walls = []; 
-      var pad = 5;
-      this.walls.push(new Wall(new Vec(0, pad), new Vec(this.W, pad)));
-      this.walls.push(new Wall(new Vec(0, this.H-pad), new Vec(this.W, this.H-pad)));
+      this.pad = 5;
+      this.walls.push(new Wall(new Vec(0, this.pad), new Vec(this.W, this.pad)));
+      this.walls.push(new Wall(new Vec(0, this.H-this.pad), new Vec(this.W, this.H-this.pad)));
 
       // set up pipes pool
       this.pipes = [];
@@ -106,7 +106,12 @@ var canvas, ctx;
       stuff_collide_: function(closest_pipe) {
         var collide = false;
         var bird = this.agent;
-        // collide with walls
+        //collide with walls
+
+        if(bird.position.y<this.pad || bird.position.y>this.H-this.pad){
+          collide = true;
+        }
+          
         for(var i=0;i<this.walls.length;i++) {
           var wall = this.walls[i];
           collide = line_point_intersect(wall.p1, wall.p2, bird.position, bird.rad);
@@ -234,7 +239,7 @@ var canvas, ctx;
       // properties
       this.rad = 10; //default radius
       this.velocity = 0;
-      this.gravity = 0.001; //default gravity
+      this.gravity = 1; //default gravity
       this.current_gap = new Vec(200,250);
       //reward signal
       this.collision_sense = 0;
