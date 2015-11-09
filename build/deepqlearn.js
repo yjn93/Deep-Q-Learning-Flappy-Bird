@@ -188,6 +188,7 @@ var deepqlearn = deepqlearn || { REVISION: 'ALPHA' };
         if(rf < this.epsilon) {
           // choose a random action with epsilon probability
           action = this.random_action();
+          // console.log(action); //  Yulin 2 Nov 2015
         } else {
           // otherwise use our policy to make decision
           var maxact = this.policy(net_input);

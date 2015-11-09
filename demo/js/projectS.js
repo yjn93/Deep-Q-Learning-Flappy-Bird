@@ -204,7 +204,6 @@ var canvas, ctx;
 
 
           var collision = this.stuff_collide_(current_pipe);
-          console.log(collision);
           if(collision) {
             // bird collide with wall or pipe
             this.collision_sense = collision;
@@ -273,13 +272,10 @@ var canvas, ctx;
         // compute reward 
         var reward = 0.0;
         if(this.collision_sense){
-
           reward = -1000*this.collision_sense;
-          console.log(reward);
         }
         else{
           reward = 1;
-          console.log(reward);
         }
             
         // pass to brain for learning
@@ -352,21 +348,6 @@ var canvas, ctx;
       skipdraw = false;
       simspeed = 1;
     }
-
-    function savenet() {
-      var j = w.agent.brain.value_net.toJSON();
-      var t = JSON.stringify(j);
-      document.getElementById('tt').value = t;
-    }
-    
-    function loadnet() {
-      var t = document.getElementById('tt').value;
-      var j = JSON.parse(t);
-      w.agent.brain.value_net.fromJSON(j);
-      stoplearn(); // also stop learning
-      gonormal();
-    }
-    
     var w; // global world object
     var current_interval_id;
     var skipdraw = false;
