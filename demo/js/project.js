@@ -75,7 +75,6 @@ var canvas, ctx;
       this.gap = new Vec(x, height); // position of the gap
       this.size = 100 //default size of pipe
       this.v = -1; // default moving velocity
-      this.cleanup_ = false;
     }
     
     var World = function() {
@@ -93,9 +92,9 @@ var canvas, ctx;
 
       // set up pipes pool
       this.pipes = [];
-      for(var k=1;k<7;k++) {
-        var x = k*400
-        var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
+      for(var k=1;k<6;k++) {
+        var x = k*300 - 100
+        var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
       }
@@ -109,7 +108,8 @@ var canvas, ctx;
         //collide with walls
         
         if(bird.position.y<this.pad || bird.position.y>this.H-this.pad){
-          return true;
+          console.log("collision with walls");
+          return 1;
         }
           
         for(var i=0;i<this.walls.length;i++) {
@@ -117,24 +117,28 @@ var canvas, ctx;
           collide = line_point_intersect(wall.p1, wall.p2, bird.position, bird.rad);
         }
         if(collide) {
+          console.log("collision with walls");
           return 1; //if collide with wall, return collision type 1
         }
         var frames = [];
         var pipe_x = closest_pipe.gap.x;
         var gap_h = closest_pipe.gap.y;
-        var gap_size = this.H/5;
+        var gap_size = 75;
         util_add_box(frames, pipe_x, 0, closest_pipe.size, gap_h-gap_size);
         util_add_box(frames, pipe_x, gap_h+gap_size, closest_pipe.size, this.H-gap_h+gap_size);        
         for(var i=0;i<frames.length;i++) {
           var frame = frames[i];
           collide = line_point_intersect(frame.p1, frame.p2, bird.position, bird.rad);   
           if(collide) {
+            console.log("collision with pipes");
+            alert("collision with pipes"+Math.abs(gap_h - bird.position.y)/this.H);
             return Math.abs(gap_h - bird.position.y)/this.H; //if collide with pipe, return destance to gap
           }        
         }
         ctx.fillStyle = "rgb(0, 255, 0)";
         ctx.rect(0,0,40,40);
-        ctx.fill();      
+        ctx.fill();  
+        console.log("no collision");    
         return false;
         
       },
@@ -148,8 +152,8 @@ var canvas, ctx;
         }
         if(this.pipes[0].gap.x<-100){
           this.pipes.shift();
-          var x = this.pipes.length*400+100;
-          var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
+          var x = this.pipes.length*300+200;
+          var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
           var it = new Pipe(x, y);
           this.pipes.push(it);
         }
@@ -162,7 +166,7 @@ var canvas, ctx;
           var current_pipe;
           for(var i=0;i<this.pipes.length;i++) {
             var pipe = this.pipes[i];
-            if(pipe.gap.x>0&&pipe.gap.x<=400){
+            if(pipe.gap.x>0&&pipe.gap.x<=300){
               current_pipe = pipe;
             }
           }
@@ -177,7 +181,7 @@ var canvas, ctx;
             ctx.fillStyle = "rgb(0, 255, 0)";
             ctx.rect(0,0,40,40);
             ctx.fill();
-            this.agent.velocity = -5; //update velocity of the bird to +5
+            this.agent.velocity = -5; //update velocity of the bird to -5
             this.agent.position.y += this.agent.velocity;
           }
           else {
@@ -193,8 +197,8 @@ var canvas, ctx;
           }
           if(this.pipes[0].gap.x<-100){
             this.pipes.shift();
-            var x = this.pipes.length*400+100;
-            var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
+            var x = this.pipes.length*300+200;
+            var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
             var it = new Pipe(x, y);
             this.pipes.push(it);
           }
@@ -204,22 +208,24 @@ var canvas, ctx;
 
 
           var collision = this.stuff_collide_(current_pipe);
-          console.log(collision);
+          console.log("collision is: ", collision);
+
           if(collision) {
+            alert("collision with pipes, collision is:"+collision);
             // bird collide with wall or pipe
-            this.collision_sense = collision;
+            this.agent.collision_sense = collision;
             this.agent.reload();
             // reset pipes pool
             this.pipes = [];
             for(var k=1;k<7;k++) {
-              var x = k*400
+              var x = k*300-100
               var y = convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
               var it = new Pipe(x, y*50);
               this.pipes.push(it);
             }
           }
           else {
-            this.collision_sense = 0;
+            this.agent.collision_sense = 0;
           }
           // agents are given the opportunity to learn based on feedback of their action on environment
           this.agent.backward();
@@ -276,6 +282,7 @@ var canvas, ctx;
 
           reward = -1000*this.collision_sense;
           console.log(reward);
+          alert("collision reward"+reward);
         }
         else{
           reward = 1;
@@ -328,8 +335,8 @@ var canvas, ctx;
       for(var i=0,n=w.pipes.length;i<n;i++) {
         var pipe = w.pipes[i];    
         ctx.beginPath();
-        ctx.rect(pipe.gap.x,0,pipe.size,pipe.gap.y-w.H/5);
-        ctx.rect(pipe.gap.x,pipe.gap.y+w.H/5,pipe.size,w.H-pipe.gap.y+w.H/5);
+        ctx.rect(pipe.gap.x,0,pipe.size,pipe.gap.y-75);
+        ctx.rect(pipe.gap.x,pipe.gap.y+75,pipe.size,w.H-pipe.gap.y-75);
         ctx.fill();
         ctx.stroke();
       }
