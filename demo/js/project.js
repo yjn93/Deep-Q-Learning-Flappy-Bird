@@ -271,7 +271,7 @@ var canvas, ctx;
         var reward = 0.0;
         if(this.collision_sense){
 
-          reward = -1000*this.collision_sense;
+          reward = -2000*this.collision_sense;
           //console.log("reward",reward);
           //alert("collision reward"+reward);
         }

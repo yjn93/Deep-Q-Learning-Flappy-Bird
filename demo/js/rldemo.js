@@ -1,4 +1,4 @@
-  var canvas, ctx;
+    var canvas, ctx;
     
     // A 2D vector utility
     var Vec = function(x, y) {
@@ -499,7 +499,7 @@
         ctx.stroke();
       }
       
-      w.agent.brain.visSelf(document.getElementById('brain_info_div'));
+      w.agents[0].brain.visSelf(document.getElementById('brain_info_div'));
     }
     
     // Tick the world
