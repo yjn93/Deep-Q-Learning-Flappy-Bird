@@ -83,8 +83,6 @@ var canvas, ctx;
       this.H = canvas.height;
       
       this.clock = 0;
-
-
       this.walls = []; 
       this.pad = 5;
       this.walls.push(new Wall(new Vec(0, this.pad), new Vec(this.W, this.pad)));
@@ -108,7 +106,7 @@ var canvas, ctx;
         //collide with walls
         
         if(bird.position.y<this.pad || bird.position.y>this.H-this.pad){
-          console.log("collision with walls");
+          //console.log("collision with walls");
           return 1;
         }
           
@@ -117,7 +115,7 @@ var canvas, ctx;
           collide = line_point_intersect(wall.p1, wall.p2, bird.position, bird.rad);
         }
         if(collide) {
-          console.log("collision with walls");
+          //console.log("collision with walls");
           return 1; //if collide with wall, return collision type 1
         }
         var frames = [];
@@ -130,15 +128,10 @@ var canvas, ctx;
           var frame = frames[i];
           collide = line_point_intersect(frame.p1, frame.p2, bird.position, bird.rad);   
           if(collide) {
-            console.log("collision with pipes");
-            alert("collision with pipes"+Math.abs(gap_h - bird.position.y)/this.H);
+            //console.log("collision with pipes");
             return Math.abs(gap_h - bird.position.y)/this.H; //if collide with pipe, return destance to gap
           }        
-        }
-        ctx.fillStyle = "rgb(0, 255, 0)";
-        ctx.rect(0,0,40,40);
-        ctx.fill();  
-        console.log("no collision");    
+        }    
         return false;
         
       },
@@ -178,9 +171,6 @@ var canvas, ctx;
           // apply outputs of agent on evironment
           if(this.agent.action) {
             //action type 1, flap
-            ctx.fillStyle = "rgb(0, 255, 0)";
-            ctx.rect(0,0,40,40);
-            ctx.fill();
             this.agent.velocity = -5; //update velocity of the bird to -5
             this.agent.position.y += this.agent.velocity;
           }
@@ -195,7 +185,7 @@ var canvas, ctx;
             var pipe = this.pipes[i];
             pipe.gap.x += pipe.v;
           }
-          if(this.pipes[0].gap.x<-100){
+          if(this.pipes[0].gap.x<=-100){
             this.pipes.shift();
             var x = this.pipes.length*300+200;
             var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
@@ -208,10 +198,8 @@ var canvas, ctx;
 
 
           var collision = this.stuff_collide_(current_pipe);
-          console.log("collision is: ", collision);
 
           if(collision) {
-            alert("collision with pipes, collision is:"+collision);
             // bird collide with wall or pipe
             this.agent.collision_sense = collision;
             this.agent.reload();
@@ -226,7 +214,8 @@ var canvas, ctx;
           }
           else {
             this.agent.collision_sense = 0;
-          }
+            this.agent.score ++;
+           }
           // agents are given the opportunity to learn based on feedback of their action on environment
           this.agent.backward();
         } 
@@ -244,12 +233,13 @@ var canvas, ctx;
       this.position = new Vec(100, 250);
       
       // properties
-      this.rad = 10; //default radius
+      this.rad = 12; //default radius
       this.velocity = 0;
       this.gravity = 0.5; //default gravity
       this.current_gap = new Vec(200,250);
       //reward signal
       this.collision_sense = 0;
+      this.score = 100;
 
       // brain
       //this.brain = new deepqlearn.Brain(this.eyes.length * 3, this.actions.length);
@@ -273,6 +263,7 @@ var canvas, ctx;
         
         // get action from brain
         this.action = this.brain.forward(input_array);
+        //console.log("action:",this.action, this.velocity);
       },
       backward: function() {
         // in backward pass agent learns.
@@ -281,12 +272,12 @@ var canvas, ctx;
         if(this.collision_sense){
 
           reward = -1000*this.collision_sense;
-          console.log(reward);
-          alert("collision reward"+reward);
+          //console.log("reward",reward);
+          //alert("collision reward"+reward);
         }
         else{
           reward = 1;
-          console.log(reward);
+          //console.log("reward",reward);
         }
             
         // pass to brain for learning
@@ -301,6 +292,7 @@ var canvas, ctx;
         this.velocity = 0;
         this.gravity = 0.5; //default gravity
         this.current_gap = new Vec(200,250);
+        this.score = 100;
       }
     }
     
@@ -321,14 +313,18 @@ var canvas, ctx;
       }
       ctx.stroke();
   
-      // draw agents
-      ctx.fillStyle = "rgb(255,0,0)";
-      ctx.strokeStyle = "rgb(0,0,0)";
-      ctx.beginPath();
-      ctx.arc(agent.position.x, agent.position.y, agent.rad, 0, Math.PI*2, true); 
-      ctx.fill();
-      ctx.stroke();
-      
+      // // draw agents
+      // ctx.fillStyle = "rgb(255,0,0)";
+      // ctx.strokeStyle = "rgb(0,0,0)";
+      // ctx.beginPath();
+      // ctx.arc(agent.position.x, agent.position.y, agent.rad, 0, Math.PI*2, true); 
+      // ctx.fill();
+      // ctx.stroke();
+      ctx.font = "30px Arial";
+      ctx.fillText((Math.floor(agent.score/300)).toString(),10,50);
+
+      var bird_img = document.getElementById("bird");
+      ctx.drawImage(bird_img, agent.position.x-15, agent.position.y-10, 27, 20);
       // draw pipes
       ctx.strokeStyle = "rgb(0,0,0)";
       ctx.fillStyle = "rgb(0, 255, 0)";
@@ -355,7 +351,7 @@ var canvas, ctx;
 
     function gonormal() {
       window.clearInterval(current_interval_id);
-      current_interval_id = setInterval(tick, 10);
+      current_interval_id = setInterval(tick, 20);
       skipdraw = false;
       simspeed = 1;
     }
