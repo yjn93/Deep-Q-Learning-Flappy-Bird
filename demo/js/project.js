@@ -91,7 +91,7 @@ var canvas, ctx;
       // set up pipes pool
       this.pipes = [];
       for(var k=1;k<6;k++) {
-        var x = k*300 - 100
+        var x = k*300 - 100;
         var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
@@ -124,22 +124,12 @@ var canvas, ctx;
         var pipe_x = closest_pipe.gap.x;
         var gap_h = closest_pipe.gap.y;
         var gap_size = 75;
-        if(bird_x<pipe_x-bird.rad||(bird_y>(gap_h-gap_size+bird.rad)&&bird_y<(gap_h+gap_size-bird.rad)))
+        if(bird_x<pipe_x-bird.rad&&pipe_x<300-15)
           return false;
-        else 
+        else if (bird_y>(gap_h-gap_size+bird.rad)&&bird_y<(gap_h+gap_size-bird.rad)) 
+          return false;
+        else
           return Math.abs(gap_h - bird.position.y)/this.H;
-        // util_add_box(frames, pipe_x, 0, closest_pipe.size, gap_h-gap_size);
-        // util_add_box(frames, pipe_x, gap_h+gap_size, closest_pipe.size, this.H-gap_h+gap_size);        
-        // for(var i=0;i<frames.length;i++) {
-        //   var frame = frames[i];
-        //   collide = line_point_intersect(frame.p1, frame.p2, bird.position, bird.rad);   
-        //   if(collide) {
-        //     //console.log("collision with pipes");
-        //     return Math.abs(gap_h - bird.position.y)/this.H; //if collide with pipe, return destance to gap
-        //   }        
-        // }    
-        //return false;
-        
       },
       update_world: function() {
         this.agent.velocity += this.agent.gravity;
@@ -287,8 +277,9 @@ var canvas, ctx;
           if(this.current_gap.x<100)
             reward = 1;
           else
-            reward = 0.5
+            reward = 1 - 0.5*Math.abs(this.current_gap.y-this.position.y)/500;
         }
+
         console.log("reward",reward);
         // pass to brain for learning
         this.brain.backward(reward);
@@ -394,7 +385,11 @@ var canvas, ctx;
       //stoplearn(); // also stop learning
       gofast();
     }
-    
+
+    function stoplearn() {
+      w.agent.brain.learning = false;
+    }   
+
     var w; // global world object
     var current_interval_id;
     var skipdraw = false;

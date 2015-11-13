@@ -80,7 +80,7 @@ opt.temporal_window = temporal_window;
 opt.experience_size = 30000;
 opt.start_learn_threshold = 1000;
 opt.gamma = 0.7;
-opt.learning_steps_total = 2000000;
+opt.learning_steps_total = 300000;
 opt.learning_steps_burnin = 3000;
 opt.epsilon_min = 0.05;
 opt.epsilon_test_time = 0.05;
@@ -118,7 +118,7 @@ var brain = new deepqlearn.Brain(num_inputs, num_actions, opt); // woohoo
    
    <div><b>Left</b>: Current input state (quite a useless thing to look at). <b>Right</b>: Average reward over time (this should go up as agent becomes better on average at collecting rewards)</div>
    <canvas id="vis_canvas" width="350" height="150"></canvas>
-   <canvas id="graph_canvas" width="350" height="150"></canvas><br />
+   <canvas id="graph_canvas" width="700" height="250"></canvas><br />
    <canvas id="net_canvas" width="700" height="200"></canvas><br />
 
    <div style="font-size:13px;">
