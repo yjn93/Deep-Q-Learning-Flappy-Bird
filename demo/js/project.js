@@ -124,7 +124,7 @@ var canvas, ctx;
         var pipe_x = closest_pipe.gap.x;
         var gap_h = closest_pipe.gap.y;
         var gap_size = 75;
-        if(bird_x<pipe_x-bird.rad&&pipe_x<300-15)
+        if(bird_x<pipe_x-bird.rad)
           return false;
         else if (bird_y>(gap_h-gap_size+bird.rad)&&bird_y<(gap_h+gap_size-bird.rad)) 
           return false;
@@ -155,7 +155,7 @@ var canvas, ctx;
           var current_pipe;
           for(var i=0;i<this.pipes.length;i++) {
             var pipe = this.pipes[i];
-            if(pipe.gap.x>0&&pipe.gap.x<=300){
+            if(pipe.gap.x>0-15&&pipe.gap.x<=300-15){
               current_pipe = pipe;
             }
           }
@@ -280,7 +280,7 @@ var canvas, ctx;
             reward = 1 - 0.5*Math.abs(this.current_gap.y-this.position.y)/500;
         }
 
-        console.log("reward",reward);
+        //console.log("reward",reward);
         // pass to brain for learning
         this.brain.backward(reward);
       },
@@ -375,15 +375,15 @@ var canvas, ctx;
     function savenet() {
       var j = w.agent.brain.value_net.toJSON();
       var t = JSON.stringify(j);
-      document.getElementById('tt').value = t;
+      document.getElementById('updatenet').value = t;
     }
     
     function loadnet() {
-      var t = document.getElementById('tt').value;
+      var t = document.getElementById('updatenet').value;
       var j = JSON.parse(t);
       w.agent.brain.value_net.fromJSON(j);
-      //stoplearn(); // also stop learning
-      gofast();
+      stoplearn(); // also stop learning
+      gonormal();
     }
 
     function stoplearn() {
