@@ -103,9 +103,11 @@ var canvas, ctx;
       stuff_collide_: function(closest_pipe) {
         var collide = false;
         var bird = this.agent;
+        var bird_x = bird.position.x;
+        var bird_y = bird.position.y;
         //collide with walls
         
-        if(bird.position.y<this.pad || bird.position.y>this.H-this.pad){
+        if(bird_y<this.pad || bird_y>this.H-this.pad){
           //console.log("collision with walls");
           return 1;
         }
@@ -122,17 +124,21 @@ var canvas, ctx;
         var pipe_x = closest_pipe.gap.x;
         var gap_h = closest_pipe.gap.y;
         var gap_size = 75;
-        util_add_box(frames, pipe_x, 0, closest_pipe.size, gap_h-gap_size);
-        util_add_box(frames, pipe_x, gap_h+gap_size, closest_pipe.size, this.H-gap_h+gap_size);        
-        for(var i=0;i<frames.length;i++) {
-          var frame = frames[i];
-          collide = line_point_intersect(frame.p1, frame.p2, bird.position, bird.rad);   
-          if(collide) {
-            //console.log("collision with pipes");
-            return Math.abs(gap_h - bird.position.y)/this.H; //if collide with pipe, return destance to gap
-          }        
-        }    
-        return false;
+        if(bird_x<pipe_x-bird.rad||(bird_y>(gap_h-gap_size+bird.rad)&&bird_y<(gap_h+gap_size-bird.rad)))
+          return false;
+        else 
+          return Math.abs(gap_h - bird.position.y)/this.H;
+        // util_add_box(frames, pipe_x, 0, closest_pipe.size, gap_h-gap_size);
+        // util_add_box(frames, pipe_x, gap_h+gap_size, closest_pipe.size, this.H-gap_h+gap_size);        
+        // for(var i=0;i<frames.length;i++) {
+        //   var frame = frames[i];
+        //   collide = line_point_intersect(frame.p1, frame.p2, bird.position, bird.rad);   
+        //   if(collide) {
+        //     //console.log("collision with pipes");
+        //     return Math.abs(gap_h - bird.position.y)/this.H; //if collide with pipe, return destance to gap
+        //   }        
+        // }    
+        //return false;
         
       },
       update_world: function() {
@@ -215,6 +221,8 @@ var canvas, ctx;
           else {
             this.agent.collision_sense = 0;
             this.agent.score ++;
+            if(this.agent.score/300>this.agent.best_score)
+              this.agent.best_score = this.agent.score/300;
            }
           // agents are given the opportunity to learn based on feedback of their action on environment
           this.agent.backward();
@@ -240,6 +248,7 @@ var canvas, ctx;
       //reward signal
       this.collision_sense = 0;
       this.score = 100;
+      this.best_score = 0;
 
       // brain
       //this.brain = new deepqlearn.Brain(this.eyes.length * 3, this.actions.length);
@@ -272,16 +281,15 @@ var canvas, ctx;
         // compute reward 
         var reward = 0.0;
         if(this.collision_sense){
-
-          reward = (-2)*this.collision_sense;
-          //console.log("reward",reward);
-          //alert("collision reward"+reward);
+          reward = (-10)*this.collision_sense;
         }
         else{
-          reward = 1;
-          //console.log("reward",reward);
+          if(this.current_gap.x<100)
+            reward = 1;
+          else
+            reward = 0.5
         }
-            
+        console.log("reward",reward);
         // pass to brain for learning
         this.brain.backward(reward);
       },
@@ -298,7 +306,16 @@ var canvas, ctx;
       }
     }
     
-    
+    var reward_graph = new cnnvis.Graph();
+    function draw_stats() {
+      var b = w.agent.brain;
+      if(w.clock % 500 === 0) {
+        reward_graph.add(w.clock/500, b.average_reward_window.get_average());
+        var gcanvas = document.getElementById("graph_canvas");
+        reward_graph.drawSelf(gcanvas);
+      }
+    }
+        
     // Draw everything
     function draw() {  
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -315,17 +332,10 @@ var canvas, ctx;
       }
       ctx.stroke();
   
-      // // draw agents
-      // ctx.fillStyle = "rgb(255,0,0)";
-      // ctx.strokeStyle = "rgb(0,0,0)";
-      // ctx.beginPath();
-      // ctx.arc(agent.position.x, agent.position.y, agent.rad, 0, Math.PI*2, true); 
-      // ctx.fill();
-      // ctx.stroke();
-      ctx.font = "30px Arial";
-      ctx.fillText((Math.floor(agent.score/300)).toString(),10,50);
+
 
       var bird_img = document.getElementById("bird");
+
       ctx.drawImage(bird_img, agent.position.x-15, agent.position.y-10, 27, 20);
       // draw pipes
       ctx.strokeStyle = "rgb(0,0,0)";
@@ -338,7 +348,12 @@ var canvas, ctx;
         ctx.fill();
         ctx.stroke();
       }
-      
+
+      ctx.fillStyle = "rgb(0, 0, 0)";
+      ctx.font = "30px Arial";
+      ctx.fillText((Math.floor(agent.score/300)).toString(),10,50);
+      ctx.font = "20px Arial";
+      ctx.fillText("Best_score: "+(Math.floor(agent.best_score)).toString(),10,480);     
       w.agent.brain.visSelf(document.getElementById('brain_info_div'));
     }
     
@@ -346,10 +361,18 @@ var canvas, ctx;
     function tick() {
       w.tick();
       draw();
+      draw_stats();
       
     }
     
     var simspeed = 2;
+
+    function gofast() {
+      window.clearInterval(current_interval_id);
+      current_interval_id = setInterval(tick, 2);
+      skipdraw = false;
+      simspeed = 2;
+    }
 
     function gonormal() {
       window.clearInterval(current_interval_id);
@@ -368,8 +391,8 @@ var canvas, ctx;
       var t = document.getElementById('tt').value;
       var j = JSON.parse(t);
       w.agent.brain.value_net.fromJSON(j);
-      stoplearn(); // also stop learning
-      gonormal();
+      //stoplearn(); // also stop learning
+      gofast();
     }
     
     var w; // global world object
@@ -379,5 +402,5 @@ var canvas, ctx;
       canvas = document.getElementById("canvas");
       ctx = canvas.getContext("2d");    
       w = new World();    
-      gonormal();
+      gofast();
     }
