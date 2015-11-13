@@ -1827,7 +1827,6 @@ var convnetjs = convnetjs || { REVISION: 'ALPHA' };
           }
         }
       }
-
       // appending softmax_loss for backwards compatibility, but from now on we will always use cost_loss
       // in future, TODO: have to completely redo the way loss is done around the network as currently 
       // loss is a bit of a hack. Ideally, user should specify arbitrary number of loss functions on any layer

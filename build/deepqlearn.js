@@ -253,6 +253,7 @@ var deepqlearn = deepqlearn || { REVISION: 'ALPHA' };
           var r = e.reward0 + this.gamma * maxact.value;
           var ystruct = {dim: e.action0, val: r};
           var loss = this.tdtrainer.train(x, ystruct);
+          //console.log("loss", loss.cost_loss);
           avcost += loss.loss;
         }
         avcost = avcost/this.tdtrainer.batch_size;

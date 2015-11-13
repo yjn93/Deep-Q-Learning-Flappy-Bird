@@ -366,7 +366,7 @@
         this.digestion_signal = 0.0;
         
         var reward = proximity_reward + forward_reward + digestion_reward;
-        
+        //console.log("reward",reward,proximity_reward,forward_reward,digestion_reward);
         // pass to brain for learning
         this.brain.backward(reward);
       }
@@ -574,5 +574,5 @@
       w = new World();
       w.agents = [new Agent()];
       
-      gofast();
+      gonormal();
     }

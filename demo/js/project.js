@@ -257,9 +257,11 @@ var canvas, ctx;
         // in forward pass the agent simply behaves in the environment
         // create input to brain
         var input_array = new Array(3);
-        input_array[0] = this.velocity; //normalize velocity
-        input_array[1] = this.current_gap.x/200;
-        input_array[2] = (this.current_gap.y-100)/800;
+        max_velocity = Math.sqrt(2*this.gravity*canvas.height);
+        input_array[0] = (this.velocity+5)/25; //normalize velocity
+        input_array[1] = this.position.y/canvas.height;
+        input_array[2] = this.current_gap.x/300;
+        input_array[3] = (this.current_gap.y-100)/300;
         
         // get action from brain
         this.action = this.brain.forward(input_array);
@@ -271,7 +273,7 @@ var canvas, ctx;
         var reward = 0.0;
         if(this.collision_sense){
 
-          reward = -2000*this.collision_sense;
+          reward = (-2)*this.collision_sense;
           //console.log("reward",reward);
           //alert("collision reward"+reward);
         }
