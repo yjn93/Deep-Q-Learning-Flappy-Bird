@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>ConvNetJS Deep Q Learning Reinforcement Learning with Neural Network demo</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="../build/convnet.js"></script>
+  <script src="../build/util.js"></script>
+  <script src="../build/vis.js"></script>
+  <script src="../build/deepqlearn.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  
+  <div style="display:none;">
+    <img id="bird" src="assets/bird.png">
+  </div>
+  <script src="js/project.js"></script>
+  <style type="text/css">
+      canvas { border: 1px solid white; }
+    </style>
+
+ </head>
+ <body onload="start();">
+   <div id="wrap">
+   <h2><a href="http://cs.stanford.edu/people/karpathy/convnetjs/">ConvNetJS</a> Deep Q Learning Demo</h2>
+   <h1>Description</h1>
+   <p>
+   This demo follows the description of the Deep Q Learning algorithm described in 
+   <a href="http://arxiv.org/pdf/1312.5602v1.pdf">Playing Atari with Deep Reinforcement Learning</a>, 
+   a paper from NIPS 2013 Deep Learning Workshop from DeepMind. The paper is a nice demo of a fairly
+   standard (model-free) Reinforcement Learning algorithm (Q Learning) learning to play Atari games.
+   </p>
+   <p>
+   In this demo, instead of Atari games, we'll start out with something more simple: 
+   a 2D agent that has 9 eyes pointing in different angles ahead and every eye senses 3 values
+   along its direction (up to a certain maximum visibility distance): distance to a wall, distance to 
+   a green thing, or distance to a red thing. The agent navigates by using one of 5 actions that turn 
+   it different angles. The red things are apples and the agent gets reward for eating them. The green
+   things are poison and the agent gets negative reward for eating them. The training takes a few tens
+   of minutes with current parameter settings.
+   </p>
+   <p>
+   Over time, the agent learns to avoid states that lead to states with low rewards, and picks actions
+   that lead to better states instead.
+   </p>
+   <h1>Q-Learner full specification and options</h1>
+   <p>
+   The textfield below gets eval()'d to produce the Q-learner for this demo. This allows you to fiddle with 
+   various parameters and settings and also shows how you can use the API for your own purposes. 
+   All of these settings are optional but are listed to give an idea of possibilities.
+   Feel free to change things around and hit reload! Documentation for all
+   options is the paper linked to above, and there are also 
+   comments for every option in the source code javascript file.
+   </p>
+   <textarea id="qspec" style="width:100%; height:200px;">
+var num_inputs = 4; // bird velocity, bird position(y) pipe position(x, y)
+var num_actions = 2; // 2 possible: to flap or not
+var temporal_window = 0; // amount of temporal memory. 0 = agent lives in-the-moment :)
+var network_size = num_inputs*temporal_window + num_actions*temporal_window + num_inputs;
+
+// the value function network computes a value of taking any of the possible actions
+// given an input state. Here we specify one explicitly the hard way
+// but user could also equivalently instead use opt.hidden_layer_sizes = [5,5]
+// to just insert simple relu hidden layers.
+var layer_defs = [];
+layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:network_size});
+layer_defs.push({type:'fc', num_neurons: 5, activation:'relu'});
+layer_defs.push({type:'fc', num_neurons: 5, activation:'relu'});
+layer_defs.push({type:'regression', num_neurons:num_actions});
+
+// options for the Temporal Difference learner that trains the above net
+// by backpropping the temporal difference learning rule.
+var tdtrainer_options = {learning_rate:0.001, momentum:0.0, batch_size:64, l2_decay:0.01};
+
+var opt = {};
+opt.temporal_window = temporal_window;
+opt.experience_size = 30000;
+opt.start_learn_threshold = 1000;
+opt.gamma = 0.7;
+opt.learning_steps_total = 30000;
+opt.learning_steps_burnin = 300;
+opt.epsilon_min = 0.05;
+opt.epsilon_test_time = 0.05;
+opt.layer_defs = layer_defs;
+opt.tdtrainer_options = tdtrainer_options;
+opt.random_action_distribution=[0.9,0.1];
+
+var brain = new deepqlearn.Brain(num_inputs, num_actions, opt); // woohoo
+   </textarea>
+   <button onclick="reload()" style="width: 200px; height: 30px; margin-top: 5px;">Reload</button>
+   
+   <h1>Q-Learner API</h1>
+   <p>It's very simple to use deeqlearn.Brain: Initialize your network:</p>
+   <pre>
+   var brain = new deepqlearn.Brain(num_inputs, num_actions);
+   </pre>
+   <p>And to train it proceed in loops as follows:</p>
+   <pre>
+   var action = brain.forward(array_with_num_inputs_numbers);
+   // action is a number in [0, num_actions) telling index of the action the agent chooses
+   // here, apply the action on environment and observe some reward. Finally, communicate it:
+   brain.backward(reward); // <-- learning magic happens here
+   </pre>
+   <p>That's it! Let the agent learn over time (it will take opt.learning_steps_total), and it
+   will only get better and better at accumulating reward as it learns. Note that the agent will still take
+   random actions with probability opt.epsilon_min even once it's fully trained. 
+   To completely disable this randomness, or change it, you can disable the learning and set epsilon_test_time to 0:</p>
+   <pre>
+   brain.epsilon_test_time = 0.0; // don't make any random choices, ever
+   brain.learning = false;
+   var action = brain.forward(array_with_num_inputs_numbers); // get optimal action from learned policy
+   </pre>
+   
+   <h1>State Visualizations</h1>
+   
+   <div><b>Left</b>: Current input state (quite a useless thing to look at). <b>Right</b>: Average reward over time (this should go up as agent becomes better on average at collecting rewards)</div>
+   <canvas id="vis_canvas" width="350" height="150"></canvas>
+   <canvas id="graph_canvas" width="700" height="250"></canvas><br />
+   <canvas id="net_canvas" width="700" height="200"></canvas><br />
+
+   <div style="font-size:13px;">
+   (Takes ~10 minutes to train with current settings. If you're impatient, scroll down and load an example pre-trained network from pre-filled JSON)
+   </div>
+   <canvas id="canvas" width="800" height="500"></canvas>
+   <div id="brain_info_div"></div>
+   
+   <h1>Controls</h1>
+   <button onclick="goveryfast()">Go very fast</button>
+   <button onclick="gofast()">Go fast</button>
+   <button onclick="gonormal()">Go normal speed</button>
+   <button onclick="goslow()">Go slow</button><br />
+   <button onclick="startlearn()">Start Learning</button>
+   <button onclick="stoplearn()">Stop Learning</button>
+   
+   <h1>I/O</h1>
+   <p>
+   You can save and load a network from JSON here. Note that the textfield is prefilled with a
+   pretrained network that works reasonable well, if you're impatient to let yours train enough.
+   Just hit the load button!
+   </p>
+   <button onclick="savenet()">Save network to JSON</button>
+   <button onclick="loadnet()">Load network from JSON</button>
+   <textarea id="updatenet" style="width:100%; height:200px;">
+{"layers":[{"out_depth":4,"out_sx":1,"out_sy":1,"layer_type":"input"},{"out_depth":5,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":4,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":4,"w":{"0":-0.15929666486333174,"1":0.8126439909701343,"2":-0.029247953719207943,"3":-0.5162180917184583}},{"sx":1,"sy":1,"depth":4,"w":{"0":-0.848958238465637,"1":-6.405552853938988,"2":-0.08377339821786459,"3":0.018874045824809536}},{"sx":1,"sy":1,"depth":4,"w":{"0":-0.43834325787181017,"1":0.07655568880546573,"2":-0.05374496185347454,"3":0.15640570507688772}},{"sx":1,"sy":1,"depth":4,"w":{"0":-0.0372819916629377,"1":1.637904442151274,"2":0.053176447116951034,"3":-1.1584224274463741}},{"sx":1,"sy":1,"depth":4,"w":{"0":-0.10965848730127768,"1":-0.12644684196755787,"2":-0.41865973011948737,"3":-0.8094034834257607}}],"biases":{"sx":1,"sy":1,"depth":5,"w":{"0":1.0610993050597328,"1":0.3546831616720796,"2":-0.14641957605842687,"3":-0.4497800746764239,"4":0.06941652720846732}}},{"out_depth":5,"out_sx":1,"out_sy":1,"layer_type":"relu"},{"out_depth":5,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":5,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":5,"w":{"0":0.2874663245052484,"1":-1.7216210126872438,"2":0.44334508211852663,"3":0.20215454698643176,"4":-0.23350941543718018}},{"sx":1,"sy":1,"depth":5,"w":{"0":0.8490782604513235,"1":-3.0620807789913904,"2":-0.7318045820850615,"3":-0.7937495409093842,"4":0.09504880302375363}},{"sx":1,"sy":1,"depth":5,"w":{"0":-1.0366801079361376,"1":4.718969787454963,"2":0.2522466822251304,"3":1.7286532419214071,"4":-0.06505093790576486}},{"sx":1,"sy":1,"depth":5,"w":{"0":0.4373088299996513,"1":2.3775611259818468,"2":-0.05899480298912727,"3":0.024041916718125077,"4":0.26657527654011826}},{"sx":1,"sy":1,"depth":5,"w":{"0":-0.5558249376765078,"1":0.06126809805994339,"2":0.24364854955688958,"3":0.36506201695078233,"4":0.1500395546481292}}],"biases":{"sx":1,"sy":1,"depth":5,"w":{"0":0.40773069956926405,"1":0.3854566335171705,"2":0.31308303790849,"3":0.5426846751426675,"4":0.13914583306591627}}},{"out_depth":5,"out_sx":1,"out_sy":1,"layer_type":"relu"},{"out_depth":2,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":5,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":5,"w":{"0":0.9558834876856923,"1":2.2850255973623215,"2":-3.8230263523978536,"3":-1.624059169005239,"4":-0.27195889070651463}},{"sx":1,"sy":1,"depth":5,"w":{"0":1.4511225460887158,"1":2.3024220211089452,"2":-3.327180560999019,"3":-1.9275053822046064,"4":-0.08356390261998795}}],"biases":{"sx":1,"sy":1,"depth":2,"w":{"0":1.0422916921579009,"1":0.9671261752133743}}},{"out_depth":2,"out_sx":1,"out_sy":1,"layer_type":"regression","num_inputs":2}]}</textarea>
+   <br />
+   
+   </div>
+ </body>
+</html>
