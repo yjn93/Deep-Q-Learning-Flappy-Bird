@@ -1,5 +1,4 @@
 var canvas, ctx;
-var pipeInterval=400;
     
     // A 2D vector utility
     var Vec = function(x, y) {
@@ -92,7 +91,7 @@ var pipeInterval=400;
       // set up pipes pool
       this.pipes = [];
       for(var k=1;k<6;k++) {
-        var x = k*pipeInterval - 100;
+        var x = k*300 - 100;
         var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
@@ -142,7 +141,7 @@ var pipeInterval=400;
         }
         if(this.pipes[0].gap.x<-100){
           this.pipes.shift();
-          var x = this.pipes.length*pipeInterval+200;
+          var x = this.pipes.length*300+200;
           var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
           var it = new Pipe(x, y);
           this.pipes.push(it);
@@ -156,7 +155,7 @@ var pipeInterval=400;
           var current_pipe;
           for(var i=0;i<this.pipes.length;i++) {
             var pipe = this.pipes[i];
-            if(pipe.gap.x>0-15&&pipe.gap.x<=pipeInterval-15){
+            if(pipe.gap.x>0-15&&pipe.gap.x<=300-15){
               current_pipe = pipe;
             }
           }
@@ -168,7 +167,7 @@ var pipeInterval=400;
           // apply outputs of agent on evironment
           if(this.agent.action) {
             //action type 1, flap
-            this.agent.velocity = -2.5; //update velocity of the bird to -5
+            this.agent.velocity = -5; //update velocity of the bird to -5
             this.agent.position.y += this.agent.velocity;
           }
           else {
@@ -184,7 +183,7 @@ var pipeInterval=400;
           }
           if(this.pipes[0].gap.x<=-100){
             this.pipes.shift();
-            var x = this.pipes.length*pipeInterval+200;
+            var x = this.pipes.length*300+200;
             var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
             var it = new Pipe(x, y);
             this.pipes.push(it);
@@ -203,7 +202,7 @@ var pipeInterval=400;
             // reset pipes pool
             this.pipes = [];
             for(var k=1;k<7;k++) {
-              var x = k*pipeInterval-50;
+              var x = k*300-100
               var y = convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
               var it = new Pipe(x, y*50);
               this.pipes.push(it);
@@ -212,8 +211,8 @@ var pipeInterval=400;
           else {
             this.agent.collision_sense = 0;
             this.agent.score ++;
-            if(this.agent.score/pipeInterval>this.agent.best_score)
-              this.agent.best_score = this.agent.score/pipeInterval;
+            if(this.agent.score/300>this.agent.best_score)
+              this.agent.best_score = this.agent.score/300;
            }
           // agents are given the opportunity to learn based on feedback of their action on environment
           this.agent.backward();
@@ -234,7 +233,7 @@ var pipeInterval=400;
       // properties
       this.rad = 12; //default radius
       this.velocity = 0;
-      this.gravity = 0.25; //default gravity
+      this.gravity = 0.5; //default gravity
       this.current_gap = new Vec(200,250);
       //reward signal
       this.collision_sense = 0;
@@ -260,8 +259,8 @@ var pipeInterval=400;
         max_velocity = Math.sqrt(2*this.gravity*canvas.height);
         input_array[0] = (this.velocity+5)/25; //normalize velocity
         input_array[1] = this.position.y/canvas.height;
-        input_array[2] = this.current_gap.x/pipeInterval;
-        input_array[3] = (this.current_gap.y-100)/pipeInterval;
+        input_array[2] = this.current_gap.x/300;
+        input_array[3] = (this.current_gap.y-100)/300;
         
         // get action from brain
         this.action = this.brain.forward(input_array);
@@ -292,7 +291,7 @@ var pipeInterval=400;
         // properties
         this.rad = 10; //default radius
         this.velocity = 0;
-        this.gravity = 0.25; //default gravity
+        this.gravity = 0.5; //default gravity
         this.current_gap = new Vec(200,250);
         this.score = 100;
       }
@@ -343,7 +342,7 @@ var pipeInterval=400;
 
       ctx.fillStyle = "rgb(0, 0, 0)";
       ctx.font = "30px Arial";
-      ctx.fillText((Math.floor(agent.score/pipeInterval)).toString(),10,50);
+      ctx.fillText((Math.floor(agent.score/300)).toString(),10,50);
       ctx.font = "20px Arial";
       ctx.fillText("Best_score: "+(Math.floor(agent.best_score)).toString(),10,480);     
       w.agent.brain.visSelf(document.getElementById('brain_info_div'));
