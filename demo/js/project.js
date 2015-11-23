@@ -74,7 +74,7 @@ var canvas, ctx;
     var Pipe = function(x, height) {
       this.gap = new Vec(x, height); // position of the gap
       this.size = 80 //default size of pipe
-      this.v = -1; // default moving velocity
+      this.v = -2; // default moving velocity
     }
     
     var World = function() {
@@ -91,7 +91,7 @@ var canvas, ctx;
       // set up pipes pool
       this.pipes = [];
       for(var k=1;k<6;k++) {
-        var x = k*300 - 100;
+        var x = k*300;
         var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
@@ -150,7 +150,7 @@ var canvas, ctx;
         // apply outputs of agent on evironment
         if(this.agent.action) {
           //action type 1, flap
-          this.agent.velocity = -5; //update velocity of the bird to -5
+          this.agent.velocity = -8; //update velocity of the bird to -5
           this.agent.position.y += this.agent.velocity;
         }
         else {
@@ -185,7 +185,7 @@ var canvas, ctx;
           // reset pipes pool
           this.pipes = [];
           for(var k=1;k<7;k++) {
-            var x = k*300-100
+            var x = k*300;
             var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 1 to 7
             var it = new Pipe(x, y);
             this.pipes.push(it);
@@ -194,8 +194,9 @@ var canvas, ctx;
         else {
           this.agent.collision_sense = 0;
           this.agent.score ++;
-          if(this.agent.score/300>this.agent.best_score)
-            this.agent.best_score = this.agent.score/300;
+
+          if(this.agent.score/150>this.agent.best_score)
+            this.agent.best_score = this.agent.score/150;
          }
         // agents are given the opportunity to learn based on feedback of their action on environment
         this.agent.backward();
@@ -217,7 +218,7 @@ var canvas, ctx;
       this.current_gap = new Vec(200,250);
       //reward signal
       this.collision_sense = 0;
-      this.score = 100;
+      this.score = 10;
       this.best_score = 0;
 
       // brain
@@ -254,7 +255,7 @@ var canvas, ctx;
           reward = (-10)*this.collision_sense;
         }
         else{
-          if(this.current_gap.x<100)
+          if(this.current_gap.x<100 || Math.abs(this.current_gap.y-this.position.y)<100)
             reward = 1;
           else
             reward = 1 - 0.5*Math.abs(this.current_gap.y-this.position.y)/500;
@@ -273,7 +274,7 @@ var canvas, ctx;
         this.velocity = 0;
         this.gravity = 0.25; //default gravity
         this.current_gap = new Vec(200,250);
-        this.score = 100;
+        this.score = 10;
       }
     }
     
@@ -333,7 +334,7 @@ var canvas, ctx;
 
       ctx.fillStyle = "rgb(0, 0, 0)";
       ctx.font = "30px Arial";
-      ctx.fillText((Math.floor(agent.score/300)).toString(),10,50);
+      ctx.fillText((Math.floor(agent.score/150)).toString(),10,50);
       ctx.font = "20px Arial";
       ctx.fillText("Best_score: "+(Math.floor(agent.best_score)).toString(),10,480);     
       w.agent.brain.visSelf(document.getElementById('brain_info_div'));
