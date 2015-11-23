@@ -95,6 +95,8 @@ h2 {
 #testset_vis {
   margin-bottom: 200px;
 }
+#canvas { background:"assets/sky.png" }
+
 body {
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   /* color: #333; */

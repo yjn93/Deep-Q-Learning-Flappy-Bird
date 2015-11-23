@@ -73,7 +73,7 @@ var canvas, ctx;
     // Pipe is made up with two pipes and a gap between.
     var Pipe = function(x, height) {
       this.gap = new Vec(x, height); // position of the gap
-      this.size = 100 //default size of pipe
+      this.size = 80 //default size of pipe
       this.v = -1; // default moving velocity
     }
     
@@ -92,7 +92,7 @@ var canvas, ctx;
       this.pipes = [];
       for(var k=1;k<6;k++) {
         var x = k*300 - 100;
-        var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
+        var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
       }
@@ -131,95 +131,75 @@ var canvas, ctx;
         else
           return Math.abs(gap_h - bird.position.y)/this.H;
       },
-      update_world: function() {
-        this.agent.velocity += this.agent.gravity;
-        this.agent.position.y += this.agent.velocity;
-        // update all pipes
+      tick: function() {
+        // tick the environment
+        this.clock++;
+
+        var current_pipe;
+        for(var i=0;i<this.pipes.length;i++) {
+          var pipe = this.pipes[i];
+          if(pipe.gap.x>0&&pipe.gap.x<=300){
+            current_pipe = pipe;
+          }
+        }
+        this.agent.current_gap = current_pipe.gap;
+        // let the agent behave in the world based on its input
+        this.agent.forward();
+        
+        
+        // apply outputs of agent on evironment
+        if(this.agent.action) {
+          //action type 1, flap
+          this.agent.velocity = -5; //update velocity of the bird to -5
+          this.agent.position.y += this.agent.velocity;
+        }
+        else {
+          //do not flap
+          this.agent.velocity += this.agent.gravity;
+          this.agent.position.y += this.agent.velocity;
+        }
+        
+        // tick all pipes
         for(var i=0;i<this.pipes.length;i++) {
           var pipe = this.pipes[i];
           pipe.gap.x += pipe.v;
         }
-        if(this.pipes[0].gap.x<-100){
+        if(this.pipes[0].gap.x<=-100){
           this.pipes.shift();
           var x = this.pipes.length*300+200;
-          var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
+          var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 2 to 8
           var it = new Pipe(x, y);
           this.pipes.push(it);
         }
 
-      },
-      tick: function() {
-        // tick the environment
-        this.clock++;
-        if(this.clock) {
-          var current_pipe;
-          for(var i=0;i<this.pipes.length;i++) {
-            var pipe = this.pipes[i];
-            if(pipe.gap.x>0-15&&pipe.gap.x<=300-15){
-              current_pipe = pipe;
-            }
-          }
-          this.agent.current_gap = current_pipe.gap;
-          // let the agent behave in the world based on its input
-          this.agent.forward();
-          
-          
-          // apply outputs of agent on evironment
-          if(this.agent.action) {
-            //action type 1, flap
-            this.agent.velocity = -5; //update velocity of the bird to -5
-            this.agent.position.y += this.agent.velocity;
-          }
-          else {
-            //do not flap
-            this.agent.velocity += this.agent.gravity;
-            this.agent.position.y += this.agent.velocity;
-          }
-          
-          // tick all pipes
-          for(var i=0;i<this.pipes.length;i++) {
-            var pipe = this.pipes[i];
-            pipe.gap.x += pipe.v;
-          }
-          if(this.pipes[0].gap.x<=-100){
-            this.pipes.shift();
-            var x = this.pipes.length*300+200;
-            var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
+        var bird_x = this.agent.position.x;
+        var bird_y = this.agent.position.y;
+
+
+        var collision = this.stuff_collide_(current_pipe);
+
+        if(collision) {
+          // bird collide with wall or pipe
+          this.agent.collision_sense = collision;
+          this.agent.reload();
+          // reset pipes pool
+          this.pipes = [];
+          for(var k=1;k<7;k++) {
+            var x = k*300-100
+            var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 1 to 7
             var it = new Pipe(x, y);
             this.pipes.push(it);
           }
-
-          var bird_x = this.agent.position.x;
-          var bird_y = this.agent.position.y;
-
-
-          var collision = this.stuff_collide_(current_pipe);
-
-          if(collision) {
-            // bird collide with wall or pipe
-            this.agent.collision_sense = collision;
-            this.agent.reload();
-            // reset pipes pool
-            this.pipes = [];
-            for(var k=1;k<7;k++) {
-              var x = k*300-100
-              var y = convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
-              var it = new Pipe(x, y*50);
-              this.pipes.push(it);
-            }
-          }
-          else {
-            this.agent.collision_sense = 0;
-            this.agent.score ++;
-            if(this.agent.score/300>this.agent.best_score)
-              this.agent.best_score = this.agent.score/300;
-           }
-          // agents are given the opportunity to learn based on feedback of their action on environment
-          this.agent.backward();
-        } 
-        else {
-          this.update_world();
         }
+        else {
+          this.agent.collision_sense = 0;
+          this.agent.score ++;
+          if(this.agent.score/300>this.agent.best_score)
+            this.agent.best_score = this.agent.score/300;
+         }
+        // agents are given the opportunity to learn based on feedback of their action on environment
+        this.agent.backward();
+        
       }
 
     }
@@ -231,9 +211,9 @@ var canvas, ctx;
       this.position = new Vec(100, 250);
       
       // properties
-      this.rad = 12; //default radius
+      this.rad = 15; //default radius
       this.velocity = 0;
-      this.gravity = 0.5; //default gravity
+      this.gravity = 0.25; //default gravity
       this.current_gap = new Vec(200,250);
       //reward signal
       this.collision_sense = 0;
@@ -289,9 +269,9 @@ var canvas, ctx;
         this.position = new Vec(100, 250);       
         this.actions = 0; //action can be 0 or 1, 0: do not flap; 1: flap
         // properties
-        this.rad = 10; //default radius
+        this.rad = 15; //default radius
         this.velocity = 0;
-        this.gravity = 0.5; //default gravity
+        this.gravity = 0.25; //default gravity
         this.current_gap = new Vec(200,250);
         this.score = 100;
       }
@@ -312,7 +292,12 @@ var canvas, ctx;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.lineWidth = 1;
       var agent = w.agent;
-      
+
+      //draw background
+      var sky = document.getElementById("background");
+      ctx.drawImage(sky, 0, 0, 800, 500);
+
+
       // draw walls in environment
       ctx.strokeStyle = "rgb(0,0,0)";
       ctx.beginPath();
@@ -322,20 +307,26 @@ var canvas, ctx;
         ctx.lineTo(q.p2.x, q.p2.y);
       }
       ctx.stroke();
-  
-
 
       var bird_img = document.getElementById("bird");
+      ctx.drawImage(bird_img, agent.position.x-20, agent.position.y-15, 38, 30); 
 
-      ctx.drawImage(bird_img, agent.position.x-15, agent.position.y-10, 27, 20);
-      // draw pipes
-      ctx.strokeStyle = "rgb(0,0,0)";
-      ctx.fillStyle = "rgb(0, 255, 0)";
+      // draw pipes      
+      ctx.strokeStyle = "rgb(0,0,0)";     
       for(var i=0,n=w.pipes.length;i<n;i++) {
-        var pipe = w.pipes[i];    
+        var pipe = w.pipes[i]; 
+        var grd = ctx.createLinearGradient(pipe.gap.x, 0, pipe.gap.x+pipe.size, 0);  
+        ctx.fillStyle = grd; 
         ctx.beginPath();
-        ctx.rect(pipe.gap.x,0,pipe.size,pipe.gap.y-75);
-        ctx.rect(pipe.gap.x,pipe.gap.y+75,pipe.size,w.H-pipe.gap.y-75);
+        grd.addColorStop(0, 'rgb(150,180,80)');
+        grd.addColorStop(0.3, 'rgb(255,250,150)');
+        grd.addColorStop(1, 'rgb(150,180,90)');
+
+        ctx.rect(pipe.gap.x+2,5,pipe.size-4,pipe.gap.y-75-5-20);
+        ctx.rect(pipe.gap.x,pipe.gap.y-75-20,pipe.size,20);
+        ctx.rect(pipe.gap.x,pipe.gap.y+75,pipe.size,20);
+        ctx.rect(pipe.gap.x+2,pipe.gap.y+75+20,pipe.size-4,w.H-pipe.gap.y-75-5-20);
+       
         ctx.fill();
         ctx.stroke();
       }
