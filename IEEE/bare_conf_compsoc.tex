@@ -158,11 +158,28 @@ V^{\pi}(s)
 = E_{\pi} \left\{ r_{t+1}+\gamma V^{\pi}(s_{t+1}) | s_t =s \right\}
 \end{equation}
 
-Another issue arose is that the Flappy Bird problem is basically a control problem while the value function alone does not tell the agent how to act without a model. 
+\subsection{Q-learning}
+Another issue arising is that while the value function alone does not tell the agent how to act without a model \eqref{eq:valueModel} which can be very complex in real environments and usually suffers greatly from poor accuracy. ~\cite{strehl2006pac}
 \begin{equation}\label{eq:valueModel}
-\hat{s} = \hat{\varepsilon} (s,a)
+\hat{s}' = \hat{\varepsilon} (s,a)
 \end{equation}
-However, the model can be sometimes very complex in real environments and it usually suffers from very poor accuracy. \cite{strehl2006pac}
+
+Since the Flappy Bird problem is basically a control problem, it is worthy of considering a model-free approach. Here we first define a $Q$ function with respect to state and action 
+\begin{equation}
+Q^{\pi} (s,a) = E_{\pi} \left\{ r_{t+1} +\gamma V^{\pi}(s_{t+1}) | s_t =s, a_t=a\right\}
+\end{equation}
+Given the value of a $Q$ function, it is possible to generate an optimal policy without a model
+\begin{equation}
+\pi(s) \leftarrow \arg \max_{a\in \mathcal{A}} Q(s,a)
+\end{equation}
+
+There are basically two approaches of learning the $Q$ function given episode samples: off-policy \eqref{eq:qlearningOff} where actions are chosen greedily and on-policy (SARSA) \eqref{eq:qlearningOn} where actions are chosen based on the policy.
+\begin{equation}\label{eq:qlearningOff}
+Q(s,a) \leftarrow Q(s,a) + \alpha \left(r+\gamma \max_{a'} Q(s',a')-Q(s,a) \right)
+\end{equation}
+\begin{equation}\label{eq:qlearningOn}
+Q(s,a) \leftarrow Q(s,a) + \alpha \left(r+\gamma Q(\pi(s,a),a')-Q(s,a) \right)
+\end{equation}
 
 
 % An example of a floating figure using the graphicx package.

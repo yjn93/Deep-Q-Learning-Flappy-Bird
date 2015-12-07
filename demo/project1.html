@@ -67,7 +67,7 @@ var network_size = num_inputs*temporal_window + num_actions*temporal_window + nu
 // to just insert simple relu hidden layers.
 var layer_defs = [];
 layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:network_size});
-layer_defs.push({type:'fc', num_neurons: 5, activation:'relu'});
+// layer_defs.push({type:'fc', num_neurons: 5, activation:'relu'});
 layer_defs.push({type:'fc', num_neurons: 5, activation:'relu'});
 layer_defs.push({type:'regression', num_neurons:num_actions});
 
