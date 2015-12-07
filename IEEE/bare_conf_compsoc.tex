@@ -150,13 +150,15 @@ V^{\pi}(s)
 = E_{\pi} \left\{ R_t | s_t =s \right\}
 = E_{\pi} \left\{ \sum_{k=0}^{\infty} \gamma^k r_{t+k+1} | s_t =s \right\}
 \end{equation}
-where $0<\gamma\leq 0$ is the discount factor. 
+where $0<\gamma\leq 1$ is the discount factor. 
  
 For the Flappy Bird problem as a Markov process, the definition of the \eqref{eq:rlValue} can be reformulated as the Bellman equation \eqref{eq:bellman} and solved using episode samples iteratively. 
 \begin{equation}\label{eq:bellman}
 V^{\pi}(s)
 = E_{\pi} \left\{ r_{t+1}+\gamma V^{\pi}(s_{t+1}) | s_t =s \right\}
 \end{equation}
+
+For a time-invariant system with smooth value function, the iterative equation \eqref{eq:rlValue} is a contraction map. The value function will converge to its fixed point. 
 
 \subsection{Q-learning}
 Another issue arising is that while the value function alone does not tell the agent how to act without a model \eqref{eq:valueModel} which can be very complex in real environments and usually suffers greatly from poor accuracy. ~\cite{strehl2006pac}
@@ -181,6 +183,19 @@ Q(s,a) \leftarrow Q(s,a) + \alpha \left(r+\gamma \max_{a'} Q(s',a')-Q(s,a) \righ
 Q(s,a) \leftarrow Q(s,a) + \alpha \left(r+\gamma Q(\pi(s,a),a')-Q(s,a) \right)
 \end{equation}
 
+\subsection{Artificial Neural Network}
+For low dimensional problem, is it feasible to use tables to describe the value functions of discrete states. However, for large dimensional problems like the Flappy Bird problem, due to the curse of dimension, the table of the value function can be very large, which makes it impractical to maintain and retrieve. In this case, a good alternative might be to use parametrized function to approximate the policy function. 
+
+Function approximation falls into two categories: linear function approximation and nonlinear function approximation. In a linear function approximation, the value of function is the linear combination of a set of nonlinear feature functions like the polynomial function, Gaussian function and other customized functions. Good understanding of the model is needed for choosing good feature functions. Nonlinear function approximation includes search tree, neural network etc. They are found to be able to learn complex problems adaptively. Therefore, in this project, we choose the neural network to parameterize the policy function. 
+
+\section{Agent Architecture}
+Using Q-learning to train the neural network. 
+
+\section{Software Architecture}
+
+\section{Experiments}
+
+\section{Results and Discussions}
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
