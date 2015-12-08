@@ -91,7 +91,7 @@ var canvas, ctx;
       // set up pipes pool
       this.pipes = [];
       for(var k=1;k<6;k++) {
-        var x = k*300;
+        var x = k*300 - 100;
         var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
@@ -150,7 +150,7 @@ var canvas, ctx;
         // apply outputs of agent on evironment
         if(this.agent.action) {
           //action type 1, flap
-          this.agent.velocity = -8; //update velocity of the bird to -5
+          this.agent.velocity = -5; //update velocity of the bird to -5
           this.agent.position.y += this.agent.velocity;
         }
         else {
@@ -185,7 +185,7 @@ var canvas, ctx;
           // reset pipes pool
           this.pipes = [];
           for(var k=1;k<7;k++) {
-            var x = k*300;
+            var x = k*300 - 100;
             var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 1 to 7
             var it = new Pipe(x, y);
             this.pipes.push(it);
@@ -214,11 +214,11 @@ var canvas, ctx;
       // properties
       this.rad = 15; //default radius
       this.velocity = 0;
-      this.gravity = 0.25; //default gravity
+      this.gravity = 0.5; //default gravity
       this.current_gap = new Vec(200,250);
       //reward signal
       this.collision_sense = 0;
-      this.score = 10;
+      this.score = 60;
       this.best_score = 0;
 
       // brain
@@ -255,7 +255,7 @@ var canvas, ctx;
           reward = (-10)*this.collision_sense;
         }
         else{
-          if(this.current_gap.x<100 || Math.abs(this.current_gap.y-this.position.y)<100)
+          if(this.current_gap.x<100)
             reward = 1;
           else
             reward = 1 - 0.5*Math.abs(this.current_gap.y-this.position.y)/500;
@@ -274,7 +274,7 @@ var canvas, ctx;
         this.velocity = 0;
         this.gravity = 0.25; //default gravity
         this.current_gap = new Vec(200,250);
-        this.score = 10;
+        this.score = 60;
       }
     }
     
