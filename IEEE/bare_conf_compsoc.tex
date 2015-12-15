@@ -66,6 +66,7 @@
 \usepackage{cite}
 %\usepackage{natbib}
 \usepackage{amsmath}
+\usepackage[pdftex]{graphicx}
 
 
 %\usepackage{url,apacite}    % package url to prevent horrible linebreaks
@@ -188,14 +189,38 @@ For low dimensional problem, is it feasible to use tables to describe the value 
 
 Function approximation falls into two categories: linear function approximation and nonlinear function approximation. In a linear function approximation, the value of function is the linear combination of a set of nonlinear feature functions like the polynomial function, Gaussian function and other customized functions. Good understanding of the model is needed for choosing good feature functions. Nonlinear function approximation includes search tree, neural network etc. They are found to be able to learn complex problems adaptively. Therefore, in this project, we choose the neural network to parameterize the policy function. 
 
-\section{Agent Architecture}
-Using Q-learning to train the neural network. 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Software Architecture}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.6in]{softwareArchitecture}
+\caption{Software Architecture}
+\label{softwareArchitecture}
+\end{figure}
+For the simulation and learning task of the project, a three level object-oriented programming architecture is designed in JavaScript: the ``World'', the ``Agent'', the ``Brain (neural network)'' and the ``Layer''. A world supports stochastic environment simulations. It calls an agent object and sends it the partially observed states. The relationship is in Figure \ref{softwareArchitecture}. 
+
+In each time step, the world and the agent is updated according to the action and the previous state. the agent calls a brain, passes the state and reward to the brain and obtain the action command from the brain. The brain calls the layers for Q-function values. 
+
+\subsection{Layer}
+There are different types of layers. Each uses a different excitation function like sigmoid functions, tanh functions, relu functions and maxout functions. The number of neurons can be customized by users during layer construction. 
+
+The connected layers are not expected to be able to select from a set of admissible actions for the agent directly. In stead, they together estimate the value of the Q-function whose value will be passed to the brain. Therefore, the output layer becomes special because it produces the value function while the output value of intermediate layers are meaningless. The common feature of all layers is that they all define ``forward'' functions which make prediction and ``backward'' function which updates layer parameters. 
+
+\subsection{Brain}
+A ``Brain'' class has layer attributes. The users define the layers depth, layer types and the initial parameters of the neuron layers. Actions of an agent is selected in the ``forward'' function of a brain. It either chooses among all actions the one corresponds to the best value, or in a small probability, chooses an action in a random distribution. The later is called the $\epsilon$-greedy policy. The $\epsilon$-greedy policy allows the agent to explore the environment. 
+
+\subsection{Agent} 
+An agent object (which is a bird in the game) stores its current state. It update its height, distance and velocity states according to the Newton's law and the action. It serves as the deterministic part of the environment. Each agent has a brain. We define distance to the gap as heuristic rewards in addition to the final rewards, for helping boosting the training speed. 
+
+\subsection{World}
+The stochastic environment is created in the ``World'' class. It creates a new pipe when the ``bird'' flies through a pair of pipe. The heigh of the gap of the pipe is chosen in random, which serves as the unknown part of the environment. Collision is detected in the world and passed to the agent. 
 
 \section{Experiments}
 
+
 \section{Results and Discussions}
+
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
