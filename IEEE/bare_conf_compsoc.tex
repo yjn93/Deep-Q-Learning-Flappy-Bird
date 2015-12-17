@@ -67,7 +67,7 @@
 %\usepackage{natbib}
 \usepackage{amsmath}
 \usepackage[pdftex]{graphicx}
-
+\usepackage{url}
 
 %\usepackage{url,apacite}    % package url to prevent horrible linebreaks
 
@@ -138,14 +138,15 @@ s' \sim \varepsilon (s,a)
 \end{equation}
 where $s$ is the current state, $a$ is the current action, $s'$ is the next state. Symbol $\sim$ mean the value of $s'$ is subject to a distribution. 
 
-In this view, it is feasible to use an artificial agent following a policy \eqref{eq:flappyPolicy} such as the $\epsilon$-greedy policy to replace human as the player to play the Flappy Bird game. \cite{sutton1998reinforcement} 
+In this view, it is feasible to use an artificial agent following a policy \eqref{eq:flappyPolicy} such as the $\epsilon$-greedy policy to replace human as the player to play the Flappy Bird game. \cite{russell1995artificial} \cite{mnih2013playing}
 \begin{equation}\label{eq:flappyPolicy}
 a=\pi(s)
 \end{equation}
 
 \subsection{Reinforcement Learning}
 One difficulty of learning the Flappy Bird problem is that the leaner agent does not perceive a prompt reward after taking an action. Rather, they get the reward at the end of an episode which is defined as the entire state-action trajectory of a round of play. At the end of an episode, the reward is proportional to the number of pipes the bird goes through. The agent is trained to learn a policy that maximize the overall reward. 
-However, the strong delayed reward in the Flappy Bird problem invalids the classical machine learning algorithms such as the regression and classification which assumes that the samples are independent. For example, the agent does not perceive any reward or penalty when it does not choose the jump action and stays far away from the gap, even if these actions and states have a strong negative influence on the subsequent rewards. Therefore, we need an index that reflect the expected utility of a state, other than the instantaneous reward. We call the index as the value function
+
+However, the strong delayed reward in the Flappy Bird problem invalids the classical machine learning algorithms such as the regression and classification which assumes that the samples are independent. For example, the agent does not perceive any reward or penalty when it does not choose the jump action and stays far away from the gap, even if these actions and states have a strong negative influence on the subsequent rewards. Therefore, we need an index that reflect the expected utility of a state, other than the instantaneous reward. We call the index as the value function 
 \begin{equation}\label{eq:rlValue}
 V^{\pi}(s)
 = E_{\pi} \left\{ R_t | s_t =s \right\}
@@ -185,7 +186,7 @@ Q(s,a) \leftarrow Q(s,a) + \alpha \left(r+\gamma Q(\pi(s,a),a')-Q(s,a) \right)
 \end{equation}
 
 \subsection{Artificial Neural Network}
-For low dimensional problem, is it feasible to use tables to describe the value functions of discrete states. However, for large dimensional problems like the Flappy Bird problem, due to the curse of dimension, the table of the value function can be very large, which makes it impractical to maintain and retrieve. In this case, a good alternative might be to use parametrized function to approximate the policy function. 
+For low dimensional problem, is it feasible to use tables to describe the value functions of discrete states. However, for large dimensional problems like the Flappy Bird problem, due to the curse of dimension, the table of the value function can be very large, which makes it impractical to maintain and retrieve. In this case, a good alternative might be to use parametrized function to approximate the policy function. \cite{sutton1999policy} \cite{riedmiller2005neural}
 
 Function approximation falls into two categories: linear function approximation and nonlinear function approximation. In a linear function approximation, the value of function is the linear combination of a set of nonlinear feature functions like the polynomial function, Gaussian function and other customized functions. Good understanding of the model is needed for choosing good feature functions. Nonlinear function approximation includes search tree, neural network etc. They are found to be able to learn complex problems adaptively. Therefore, in this project, we choose the neural network to parameterize the policy function. 
 
@@ -226,7 +227,7 @@ The stochastic environment is created in the ``World'' class. It creates a new p
 \end{figure}
 All of the functions are written in JavaScript which runs in browsers. They are called by an html file. 
 
-There are three special design characteristics which make the web page interface interactive, which is similar to the ``rldemo'' project of ``convnetjs''. First, there is a text area where users edit the default settings of neural network layers and training parameters. Second, there is a canvas like Figure \ref{fig:game} where the the Flappy bird animation and the estimated performance are displayed and updated in real time. Herein, the users are allowed to control the speed of the game. Third, using JSON to create and an I/O windows allowing users to save the current neural network to a file or to load the well-trained network. [add the URL of the file]. 
+There are three special design characteristics which make the web page interface interactive, which is similar to the ``rldemo'' project of ``convnetjs''. \cite{convnetjs} First, there is a text area where users edit the default settings of neural network layers and training parameters. Second, there is a canvas like Figure \ref{fig:game} where the the Flappy bird animation and the estimated performance are displayed and updated in real time. Herein, the users are allowed to control the speed of the game. Third, using JSON to create and an I/O windows allowing users to save the current neural network to a file or to load the well-trained network.  
 
 A four-layer neural network is chosen in this experiment for training the agent. The two inner layers are fully connected layers, each has 30 neurons. It is also found that 5 neurons is an enough choice of the resolution of the neural network in terms of a policy function. 
 

@@ -1,0 +1,38 @@
+\begin{thebibliography}{1}
+
+\bibitem{convnetjs}
+Convnetjs deep learning in your browser.
+\newblock url{http://cs.stanford.edu/people/karpathy/convnetjs/}, 2015.
+\newblock [Online; accessed 16-Dec-2015].
+
+\bibitem{mnih2013playing}
+Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis
+  Antonoglou, Daan Wierstra, and Martin Riedmiller.
+\newblock Playing atari with deep reinforcement learning.
+\newblock {\em arXiv preprint arXiv:1312.5602}, 2013.
+
+\bibitem{riedmiller2005neural}
+Martin Riedmiller.
+\newblock Neural fitted q iteration--first experiences with a data efficient
+  neural reinforcement learning method.
+\newblock In {\em Machine Learning: ECML 2005}, pages 317--328. Springer, 2005.
+
+\bibitem{russell1995artificial}
+Stuart Russell and Peter Norvig.
+\newblock Artificial intelligence: a modern approach.
+\newblock 1995.
+
+\bibitem{strehl2006pac}
+Alexander~L Strehl, Lihong Li, Eric Wiewiora, John Langford, and Michael~L
+  Littman.
+\newblock Pac model-free reinforcement learning.
+\newblock In {\em Proceedings of the 23rd international conference on Machine
+  learning}, pages 881--888. ACM, 2006.
+
+\bibitem{sutton1999policy}
+Richard~S Sutton, David~A McAllester, Satinder~P Singh, Yishay Mansour, et~al.
+\newblock Policy gradient methods for reinforcement learning with function
+  approximation.
+\newblock In {\em NIPS}, volume~99, pages 1057--1063. Citeseer, 1999.
+
+\end{thebibliography}
