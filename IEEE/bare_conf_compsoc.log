@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.28)  14 DEC 2015 23:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.28)  16 DEC 2015 22:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -315,13 +315,21 @@ File: softwareArchitecture.pdf Graphic file (type pdf)
 <use softwareArchitecture.pdf>
 Package pdftex.def Info: softwareArchitecture.pdf used on input line 197.
 (pdftex.def)             Requested size: 43.36243pt x 120.39636pt.
+ <game.jpg, id=18, 1658.195pt x 1019.81pt>
+File: game.jpg Graphic file (type jpg)
 
+<use game.jpg>
+Package pdftex.def Info: game.jpg used on input line 223.
+(pdftex.def)             Requested size: 216.81pt x 133.32687pt.
+ [2 <./softwareArchitecture.pdf>]
+<performanceCurve.jpeg, id=29, 1457.445pt x 495.8525pt>
+File: performanceCurve.jpeg Graphic file (type jpg)
 
-LaTeX Warning: Reference `softwareArchitecture' on page 2 undefined on input li
-ne 201.
+<use performanceCurve.jpeg>
+Package pdftex.def Info: performanceCurve.jpeg used on input line 238.
+(pdftex.def)             Requested size: 216.81pt x 73.76181pt.
+LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 395.
 
-[2 <./softwareArchitecture.pdf>]
-No file bare_conf_compsoc.bbl.
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -333,9 +341,7 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[3
-
-] (./bare_conf_compsoc.aux)
+[3 <./game.jpg> <./performanceCurve.jpeg>] (./bare_conf_compsoc.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -344,11 +350,11 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 3070 strings out of 493054
- 48194 string characters out of 6132089
- 116290 words of memory out of 5000000
- 6570 multiletter control sequences out of 15000+600000
- 37797 words of font info for 69 fonts, out of 8000000 for 9000
+ 3113 strings out of 493054
+ 48807 string characters out of 6132089
+ 116309 words of memory out of 5000000
+ 6601 multiletter control sequences out of 15000+600000
+ 43117 words of font info for 81 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
  37i,7n,23p,783b,247s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/softwares/latex/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</softw
@@ -365,10 +371,10 @@ blic/amsfonts/cm/cmsy7.pfb></softwares/latex/texlive/2015/texmf-dist/fonts/type
 w/times/utmbi8a.pfb></softwares/latex/texlive/2015/texmf-dist/fonts/type1/urw/t
 imes/utmr8a.pfb></softwares/latex/texlive/2015/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on bare_conf_compsoc.pdf (3 pages, 132988 bytes).
+Output written on bare_conf_compsoc.pdf (3 pages, 220090 bytes).
 PDF statistics:
- 69 PDF objects out of 1000 (max. 8388607)
+ 71 PDF objects out of 1000 (max. 8388607)
  50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

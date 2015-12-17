@@ -1,5 +1,5 @@
-[0] Config.pm:327> INFO - This is Biber 2.2
-[0] Config.pm:330> INFO - Logfile is 'bare_conf_compsoc.blg'
-[38] biber:286> INFO - === Sun Dec  6, 2015, 19:59:32
-[117] Utils.pm:163> ERROR - Cannot find control file 'bare_conf_compsoc.bcf'! - did you pass the "backend=biber" option to BibLaTeX?
-[117] Biber.pm:111> INFO - ERRORS: 1
+[1] Config.pm:327> INFO - This is Biber 2.2
+[1] Config.pm:330> INFO - Logfile is 'bare_conf_compsoc.blg'
+[45] biber:286> INFO - === Wed Dec 16, 2015, 23:00:04
+[150] Utils.pm:163> ERROR - Cannot find control file 'bare_conf_compsoc.bcf'! - did you pass the "backend=biber" option to BibLaTeX?
+[150] Biber.pm:111> INFO - ERRORS: 1

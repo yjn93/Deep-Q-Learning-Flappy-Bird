@@ -217,9 +217,33 @@ An agent object (which is a bird in the game) stores its current state. It updat
 The stochastic environment is created in the ``World'' class. It creates a new pipe when the ``bird'' flies through a pair of pipe. The heigh of the gap of the pipe is chosen in random, which serves as the unknown part of the environment. Collision is detected in the world and passed to the agent. 
 
 \section{Experiments}
+\subsection{Settings}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3in]{game.jpg}
+\caption{Flappy Bird interface}
+\label{fig:game}
+\end{figure}
+All of the functions are written in JavaScript which runs in browsers. They are called by an html file. 
 
+There are three special design characteristics which make the web page interface interactive, which is similar to the ``rldemo'' project of ``convnetjs''. First, there is a text area where users edit the default settings of neural network layers and training parameters. Second, there is a canvas like Figure \ref{fig:game} where the the Flappy bird animation and the estimated performance are displayed and updated in real time. Herein, the users are allowed to control the speed of the game. Third, using JSON to create and an I/O windows allowing users to save the current neural network to a file or to load the well-trained network. [add the URL of the file]. 
 
-\section{Results and Discussions}
+A four-layer neural network is chosen in this experiment for training the agent. The two inner layers are fully connected layers, each has 30 neurons. It is also found that 5 neurons is an enough choice of the resolution of the neural network in terms of a policy function. 
+
+To avoid stalling in a local optimal policy, the training process starts from an random exploration process caused burning steps. The length of the burning steps is chosen as 3,000 time steps. In the burning steps, the action is chosen according to a distribution of: 5\% in choosing tapping action, 95\% in choosing resting. This probability is chosen carefully as to keep the ``bird'' flying admits the middle way of the passage, rather than hitting the wall easily before exploring the potential ``successful'' states. After burning steps, it uses the $\epsilon$-greedy policy. The value of $\epsilon$ is decreasing with respect of time. The learning rate $\gamma$ in \eqref{eq:rlValue} is chosen as 0.001. 
+
+\subsection{Results and Discussions}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3in]{performanceCurve.jpeg}
+\caption{performance Curve}
+\label{fig:performanceCurve}
+\end{figure}
+As mentioned in the Software Architecture section, an layer object of an agent produces the performance index which can be used to choose greedy actions. Here, we use the performance index to denote the training performance. We plot the scalar performance index as a function of training steps in Figure \ref{fig:performanceCurve}. It shows that the value of the performance index keeps on oscillating. But the trend is that the value of performance index is increasing from the initial value of 0.8. After 500 round of training episodes, the value stabilizes at 0.97. 
+
+What we observe in the animation canvas is that the ``bird'' seldom go through the first pipe pair at the very beginning. But after 2 hours of training, it gets able to go through multiple pipe pairs. In fact, if put the $\epsilon$ value of the $\epsilon$-greedy to be zero, the bird is expected to go through infinite pipe pairs. 
+
+Another observation is that, without teaching the agent explicitly about operation strategy. Some strategies which elongate life time arise from the simple Q-learning mechanics. For example, after getting through the gap a pipe pair, the bird move quickly to the same height of the gap of the next pipe pair. We do not yet know why the Q-learning resulted in this strategy, but it does increase the expected ``success'' rate. 
 
 
 % An example of a floating figure using the graphicx package.
@@ -320,9 +344,9 @@ The stochastic environment is created in the ``World'' class. It creates a new p
 
 
 \section{Conclusion}
-The conclusion goes here.
-
-
+Without designing an explicit automatic controller for playing the ``Flappy Bird'' game, we chose using the Q-learning mechanism to train an neural network based agent. The agent observe the real-time physical variables of the  uncertain game world. After a finite time of training using Bellman iteration, the agent is able to generate controller commands which increases the expected overall rewards. What is more, a game strategy emerged as a result of the simple learning mechanism. 
+The game simulation and the training process is written in JavaScript. It runs on browser without calling for GPU. The software is developed based on API provided by the ``convnetjs'' website. 
+The result shows that, after a finite time of training, the performance indexed by the neural network output is improved. Also, the ``bird'' is able to go through more and more pipe pairs which is the aim of this project.
 
 
 % conference papers do not normally have an appendix
@@ -330,16 +354,14 @@ The conclusion goes here.
 
 
 % use section* for acknowledgment
-\ifCLASSOPTIONcompsoc
-  % The Computer Society usually uses the plural form
-  \section*{Acknowledgments}
-\else
-  % regular IEEE prefers the singular form
-  \section*{Acknowledgment}
-\fi
-
-
-The authors would like to thank...
+%\ifCLASSOPTIONcompsoc
+%  % The Computer Society usually uses the plural form
+%  \section*{Acknowledgments}
+%\else
+%  % regular IEEE prefers the singular form
+%  \section*{Acknowledgment}
+%\fi
+%The authors would like to thank...
 
 
 
@@ -368,15 +390,14 @@ The authors would like to thank...
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
 %\begin{thebibliography}{1}
-%
 %\bibitem{IEEEhowto:kopka}
 %H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
 %  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-%
 %\end{thebibliography}
 
 \bibliography{mybib.bib}{}
 \bibliographystyle{plain}
+
 
 
 % that's all folks
