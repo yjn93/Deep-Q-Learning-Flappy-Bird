@@ -92,7 +92,7 @@ var canvas, ctx;
       this.pipes = [];
       for(var k=1;k<6;k++) {
         var x = k*300 - 100;
-        var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 2 to 8
+        var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
         var it = new Pipe(x, y);
         this.pipes.push(it);
       }
@@ -167,7 +167,7 @@ var canvas, ctx;
         if(this.pipes[0].gap.x<=-100){
           this.pipes.shift();
           var x = this.pipes.length*300+200;
-          var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 2 to 8
+          var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 2 to 8
           var it = new Pipe(x, y);
           this.pipes.push(it);
         }
@@ -186,7 +186,7 @@ var canvas, ctx;
           this.pipes = [];
           for(var k=1;k<7;k++) {
             var x = k*300 - 100;
-            var y = 25*convnetjs.randi(5, 15); // the gap's height can be integer 1 to 7
+            var y = 50*convnetjs.randi(2, 9); // the gap's height can be integer 1 to 7
             var it = new Pipe(x, y);
             this.pipes.push(it);
           }
