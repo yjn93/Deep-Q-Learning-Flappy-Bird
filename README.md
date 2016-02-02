@@ -11,7 +11,7 @@ Over time, the flappy bird learns to flap or not at a point to avoid as many pip
 
 
 
-![alt text](https://github.com/yjn93/Deep-Q-Learning-Flappy-Bird/tree/master/demo/game.png "Playing Flappy Bird")
+![ScreenShot](/Screenshot/game.png)
 
 
 
