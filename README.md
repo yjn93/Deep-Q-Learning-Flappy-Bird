@@ -1,6 +1,8 @@
 # Deep Reinforcement Learning for Flappy Bird
 
-Check the below link to train a Flappy Bird (or test a already trained one using JSON) 
+See our video demo on YouTube [Video Demo](https://youtu.be/X6xCFtKCkK0)
+
+Want to train a Flappy Bird? 
 
 [Train a Flappy Bird!](http://htmlpreview.github.io/?https://github.com/yjn93/Deep-Q-Learning-Flappy-Bird/blob/master/demo/flappybird.html)
 
