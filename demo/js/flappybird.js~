@@ -389,5 +389,5 @@ var canvas, ctx;
       canvas = document.getElementById("canvas");
       ctx = canvas.getContext("2d");    
       w = new World();    
-      gonormal();
+      gofast();
     }
